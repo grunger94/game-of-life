@@ -1,3 +1,4 @@
+var velocidad_refrescado = 500;
 var porciento_celdas_vivas = 0.5;
 var cuantas_x = 20;
 var cuantas_y = null;
@@ -37,7 +38,7 @@ function set_vecinos_celdas()
 
 function tick()
 {
-    setInterval(itera_juego, 500);
+    setInterval(itera_juego, velocidad_refrescado);
 }
 
 function itera_array(arr, funcion_a_ejecutar, parametros)
