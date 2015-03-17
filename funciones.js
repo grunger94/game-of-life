@@ -26,7 +26,7 @@ var Celda = function(x, y, vivo)
 {
     this.x = x;
     this.y = y;
-    this.key = (x+''+y);
+    this.key = (x+'_'+y);
     this.vivo = vivo;
     this.nuevoEstatus = new Falso;
     this.vecinos = new Falso;
@@ -131,18 +131,18 @@ function agregarCelda(x, y)
 
 function obtieneCelda(x, y)
 {   
-    var esCelda = celdas[x+''+y] instanceof Celda;
+    var esCelda = celdas[x+'_'+y] instanceof Celda;
     return decideExisteCelda[esCelda](x, y);
 }
 
 function creaCelda(x, y)
 {
-    celdas[x+''+y] = new Celda(x, y, Math.random() <= porcientoCeldasVivas); 
+    celdas[x+'_'+y] = new Celda(x, y, Math.random() <= porcientoCeldasVivas); 
 }
 
 function retornaCelda(x, y)
 {
-    return celdas[x+''+y];
+    return celdas[x+'_'+y];
 }
 
 function obtieneVecinos(celda)
