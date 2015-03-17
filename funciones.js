@@ -1,4 +1,5 @@
-var velocidad_refrescado = 500;
+/*---------------------------------------------VARIABLES------------------------------------------*/
+var velocidad_refrescado   = 500;
 var porciento_celdas_vivas = 0.5;
 var cuantas_x = 20;
 var cuantas_y = null;
@@ -8,13 +9,16 @@ var contador_y = -1;
 var contador_i = -1;
 
 var ancho_celda = null;
-var alto_celda = null;
+var alto_celda  = null;
 
-var celdas = {};
 var alrededores = [[-1, -1], [0, -1], [1, -1],[-1, 0], [1, 0],[-1, 1], [0, 1], [1, 1]];
 
-var grid = $("#grid");
+var celdas = {};
+var grid   = $("#grid");
 var contexto = grid[0].getContext("2d");
+
+var Verdadero = function(){}
+var Falso     = function(){}
 
 var Celda = function(x, y, vivo)
 {
@@ -22,9 +26,11 @@ var Celda = function(x, y, vivo)
     this.y = y;
     this.key = (x+'_'+y);
     this.vivo = vivo;
-    this.nuevo_status = false;
-    this.vecinos = false;
+    this.nuevo_status = new Falso;
+    this.vecinos = new Falso;
 }
+
+/*---------------------------------------------FUNCIONES------------------------------------------*/
 
 function set_celdas()
 {
@@ -117,18 +123,19 @@ function itera_y(funcion_a_ejecutar)
 
 function agregar_celda(x, y)
 {    
-    return existe_celda[obtiene_celda(x, y)](x, y);
+    var instancia = obtiene_celda(x, y);
+    return accion_celda[!(instancia instanceof Falso)](x, y);
 }
 
 function obtiene_celda(x, y)
 {   
-    return es_objeto[celdas[x+'_'+y] != undefined](x, y);
+    var es_celda = celdas[x+'_'+y] instanceof Celda;
+    return decide_existe_celda[es_celda](x, y);
 }
 
 function crea_celda(x, y)
 {
-    celdas[x+'_'+y] = new Celda(x, y, Math.random() <= porciento_celdas_vivas);
-    return celdas[x+'_'+y];
+    celdas[x+'_'+y] = new Celda(x, y, Math.random() <= porciento_celdas_vivas); 
 }
 
 function retorna_celda(x, y)
@@ -138,12 +145,12 @@ function retorna_celda(x, y)
 
 function obtiene_vecinos(celda)
 {
-    return existe_vecino_celda[!!celda.vecinos](celda);
+    return existe_vecino_celda[!(celda.vecinos instanceof Falso)](celda);
 }
 
 function agrega_vecinos(celda)
 {
-    celda.vecinos = new Array;
+    celda.vecinos = [];
     itera_array(alrededores, agrega_celda_vecina, celda);
     return celda.vecinos;
 }
@@ -156,7 +163,7 @@ function retorna_vecinos(celda)
 function agrega_celda_vecina(posicion_vecino, celda)
 {
     var vecino = obtiene_celda((celda.x + posicion_vecino[0]), (celda.y + posicion_vecino[1]));
-    es_vecino[!!vecino](celda.vecinos, vecino);
+    decide_es_vecino[vecino instanceof Celda](celda.vecinos, vecino);
 }
 
 function agrega_a_array(arr, elemento)
@@ -189,28 +196,24 @@ function obtiene_valor_variable(parametro)
 
 function dos_vecinos(vivo)
 {
-    return Number(vivo);
+    return instancia_booleana[vivo]();
 }
 
-function cero()
+function verdadero()
 {
-    return 0;
-}
-
-function uno()
-{
-    return 1;
+    return new Verdadero;
 }
 
 function falso()
 {
-    return false;
+    return new Falso;
 }
 
 function nuevo_estatus_celda(celda)
 {
-    var vecinos_vivos = obtiene_vecinos_vivos(celda);  
-    celda.nuevo_status = evaluador_vecinos[vecinos_vivos](celda.vivo);
+    var vecinos_vivos = obtiene_vecinos_vivos(celda);
+    var instancia = evaluador_vecinos[vecinos_vivos](celda.vivo);
+    celda.nuevo_status = instancia;
 }
 
 function aplica_reglas()
@@ -233,8 +236,8 @@ function dibuja()
 function dibuja_celda(celda)
 {
     contexto.strokeStyle = '#007466';
-    es_celda_viva[celda.vivo](celda);
-    celda.vivo = !!celda.nuevo_status;
+    decide_color_celda[celda.vivo](celda);
+    celda.vivo = celda.nuevo_status instanceof Verdadero;
 }
 
 function colorea_celda(celda)
@@ -280,6 +283,6 @@ function texto_bienvenida(x, y)
 {
     contexto.textAlign = "center";
     contexto.font = "bold 20px Arial";
-    contexto.fillText("Let's run this thing!", x, y);
-    contexto.fillText("To start, click anywhere in the window", (x-10), (y+20));
+    contexto.fillText("Let's run this thing!", x, (y-10));
+    contexto.fillText("To start, click anywhere in the window", x, y+10);
 }
