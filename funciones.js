@@ -1,21 +1,23 @@
 /*---------------------------------------------VARIABLES------------------------------------------*/
-var velocidad_refrescado   = 500;
-var porciento_celdas_vivas = 0.5;
-var cuantas_x = 20;
-var cuantas_y = null;
+var velocidadRefrescado   = 500;
+var porcientoCeldasVivas = 0.5;
+var cuantasX = 20;
+var cuantasY = null;
+var contadorI = -1;
 
-var contador_x = -1;
-var contador_y = -1;
-var contador_i = -1;
-
-var ancho_celda = null;
-var alto_celda  = null;
+var anchoCelda = null;
+var altoCelda  = null;
 
 var alrededores = [[-1, -1], [0, -1], [1, -1],[-1, 0], [1, 0],[-1, 1], [0, 1], [1, 1]];
 
 var celdas = {};
 var grid   = $("#grid");
 var contexto = grid[0].getContext("2d");
+
+var contadorX = -1;
+var contadorY = -1;
+
+/*-----------------------------------------------CLASES--------------------------------------------*/
 
 var Verdadero = function(){}
 var Falso     = function(){}
@@ -24,179 +26,179 @@ var Celda = function(x, y, vivo)
 {
     this.x = x;
     this.y = y;
-    this.key = (x+'_'+y);
+    this.key = (x+''+y);
     this.vivo = vivo;
-    this.nuevo_status = new Falso;
+    this.nuevoEstatus = new Falso;
     this.vecinos = new Falso;
 }
 
 /*---------------------------------------------FUNCIONES------------------------------------------*/
 
-function set_celdas()
+function setCeldas()
 {
-    recorre_xy(agregar_celda);
+    recorreXY(agregarCelda);
 }
 
-function set_vecinos_celdas()
+function setVecinosCeldas()
 {
-    recorre_xy(obtiene_vecinos);
+    recorreXY(obtieneVecinos);
 }
 
 function tick()
 {
-    setInterval(itera_juego, velocidad_refrescado);
+    setInterval(iteraJuego, velocidadRefrescado);
 }
 
-function itera_array(arr, funcion_a_ejecutar, parametros)
+function iteraArray(arr, funcionAEjecutar, parametros)
 {
-    $("#i").on("click", recorre_i);
-    contador_i = -1;
-    $("#i").trigger("click", [arr, funcion_a_ejecutar, parametros]);
+    $("#i").on("click", recorreI);
+    contadorI = -1;
+    $("#i").trigger("click", [arr, funcionAEjecutar, parametros]);
 }
 
-function recorre_xy(funcion_a_ejecutar)
+function recorreXY(funcionAEjecutar)
 {
-    $("#x").on("click", recorre_x);
-    $("#y").on("click", recorre_y);
-    contador_x = contador_y = -1;
-    $("#x").trigger("click", funcion_a_ejecutar);
+    $("#x").on("click", recorreX);
+    $("#y").on("click", recorreY);
+    contadorX = contadorY = -1;
+    $("#x").trigger("click", funcionAEjecutar);
 }
 
-function recorre_x(evento, funcion_a_ejecutar)
+function recorreX(e, funcionAEjecutar)
 {        
-    contador_x++;
-    es_fin_x[contador_x == cuantas_x](funcion_a_ejecutar);
+    contadorX++;
+    esFinX[contadorX == cuantasX](funcionAEjecutar);
 }
     
-function recorre_y(evento, funcion_a_ejecutar)
+function recorreY(e, funcionAEjecutar)
 {       
-    contador_y++;
-    es_fin_y[contador_y == cuantas_y](funcion_a_ejecutar);
+    contadorY++;
+    esFinY[contadorY == cuantasY](funcionAEjecutar);
 }
 
-function recorre_i(evento, arr, funcion_a_ejecutar, parametros)
+function recorreI(e, arr, funcionAEjecutar, parametros)
 {        
-    contador_i++;
-    es_fin_array[contador_i == arr.length](arr, funcion_a_ejecutar, parametros);
+    contadorI++;
+    esFinArray[contadorI == arr.length](arr, funcionAEjecutar, parametros);
 }
     
-function siguiente_ciclo_x(funcion_a_ejecutar)
+function siguienteCicloX(funcionAEjecutar)
 {
-    contador_y = -1;
-    $("#x").trigger("click", funcion_a_ejecutar);
+    contadorY = -1;
+    $("#x").trigger("click", funcionAEjecutar);
 }
     
-function siguiente_ciclo_y(funcion_a_ejecutar)
+function siguienteCicloY(funcionAEjecutar)
 {
     var temporal = [];
-    itera_array(parametros[funcion_a_ejecutar.name], interpreta_parametros, temporal);
-    funcion_a_ejecutar.apply(this, temporal);
-    $("#y").trigger("click", funcion_a_ejecutar);
+    iteraArray(parametros[funcionAEjecutar.name], interpretaParametros, temporal);
+    funcionAEjecutar.apply(this, temporal);
+    $("#y").trigger("click", funcionAEjecutar);
 }
 
-function interpreta_parametros(parametro, temporal)
+function interpretaParametros(parametro, temporal)
 {
-    agrega_a_array(temporal, tipos_parametro[parametro.tipo](parametro));
+    agregaAArray(temporal, tiposParametro[parametro.tipo](parametro));
 }
 
-function siguiente_ciclo_array(arr, funcion_a_ejecutar, parametros)
+function siguienteCicloArray(arr, funcionAEjecutar, parametros)
 {
-    var parametros_funcion = [arr[contador_i], parametros];
-    funcion_a_ejecutar.apply(this, parametros_funcion);
-    $("#i").trigger("click", [arr, funcion_a_ejecutar, parametros]);
+    var parametrosFuncion = [arr[contadorI], parametros];
+    funcionAEjecutar.apply(this, parametrosFuncion);
+    $("#i").trigger("click", [arr, funcionAEjecutar, parametros]);
 }
 
-function termina_ciclo_x()
+function terminaCicloX()
 {
     $("#x, #y").off("click");
 }
 
-function termina_ciclo_array()
+function terminaCicloArray()
 {
     $("#i").off("click");
 }
 
-function itera_y(funcion_a_ejecutar)
+function iteraY(funcionAEjecutar)
 {
-    $("#y").trigger("click", funcion_a_ejecutar);
+    $("#y").trigger("click", funcionAEjecutar);
 }
 
-function agregar_celda(x, y)
+function agregarCelda(x, y)
 {    
-    var instancia = obtiene_celda(x, y);
-    return accion_celda[!(instancia instanceof Falso)](x, y);
+    var instancia = obtieneCelda(x, y);
+    return accionCelda[!(instancia instanceof Falso)](x, y);
 }
 
-function obtiene_celda(x, y)
+function obtieneCelda(x, y)
 {   
-    var es_celda = celdas[x+'_'+y] instanceof Celda;
-    return decide_existe_celda[es_celda](x, y);
+    var esCelda = celdas[x+''+y] instanceof Celda;
+    return decideExisteCelda[esCelda](x, y);
 }
 
-function crea_celda(x, y)
+function creaCelda(x, y)
 {
-    celdas[x+'_'+y] = new Celda(x, y, Math.random() <= porciento_celdas_vivas); 
+    celdas[x+''+y] = new Celda(x, y, Math.random() <= porcientoCeldasVivas); 
 }
 
-function retorna_celda(x, y)
+function retornaCelda(x, y)
 {
-    return celdas[x+'_'+y];
+    return celdas[x+''+y];
 }
 
-function obtiene_vecinos(celda)
+function obtieneVecinos(celda)
 {
-    return existe_vecino_celda[!(celda.vecinos instanceof Falso)](celda);
+    return existeVecinoCelda[!(celda.vecinos instanceof Falso)](celda);
 }
 
-function agrega_vecinos(celda)
+function agregaVecinos(celda)
 {
     celda.vecinos = [];
-    itera_array(alrededores, agrega_celda_vecina, celda);
+    iteraArray(alrededores, agregaCeldaVecina, celda);
     return celda.vecinos;
 }
 
-function retorna_vecinos(celda)
+function retornaVecinos(celda)
 {
     return celda.vecinos;
 }
 
-function agrega_celda_vecina(posicion_vecino, celda)
+function agregaCeldaVecina(posicionVecino, celda)
 {
-    var vecino = obtiene_celda((celda.x + posicion_vecino[0]), (celda.y + posicion_vecino[1]));
-    decide_es_vecino[vecino instanceof Celda](celda.vecinos, vecino);
+    var vecino = obtieneCelda((celda.x + posicionVecino[0]), (celda.y + posicionVecino[1]));
+    decideEsVecino[vecino instanceof Celda](celda.vecinos, vecino);
 }
 
-function agrega_a_array(arr, elemento)
+function agregaAArray(arr, elemento)
 {
     arr.push(elemento);
 }
 
-function obtiene_vecinos_vivos(celda)
+function obtieneVecinosVivos(celda)
 {
-    var vecinos = $.grep(obtiene_vecinos(celda), function(celda){ return celda.vivo });
+    var vecinos = $.grep(obtieneVecinos(celda), function(celda){ return celda.vivo });
     return vecinos.length;
 }
 
-function ejecuta_parametro_funcion(parametro)
+function ejecutaParametroFuncion(parametro)
 {          
     var temporal = [];
-    itera_array(parametro.parametros, agrega_a_array_valor_dom, temporal);
+    iteraArray(parametro.parametros, agregaAArrayValorDom, temporal);
     return parametro.valor.apply(this, temporal);
 }
 
-function agrega_a_array_valor_dom(parametro, temporal)
+function agregaAArrayValorDom(parametro, temporal)
 {
-    agrega_a_array(temporal, window[parametro]);
+    agregaAArray(temporal, window[parametro]);
 }
 
-function obtiene_valor_variable(parametro)
+function obtieneValorVariable(parametro)
 {
     return window[parametro.valor];
 }
 
-function dos_vecinos(vivo)
+function dosVecinos(vivo)
 {
-    return instancia_booleana[vivo]();
+    return instanciaBooleana[vivo]();
 }
 
 function verdadero()
@@ -209,80 +211,80 @@ function falso()
     return new Falso;
 }
 
-function nuevo_estatus_celda(celda)
+function nuevoEstatusCelda(celda)
 {
-    var vecinos_vivos = obtiene_vecinos_vivos(celda);
-    var instancia = evaluador_vecinos[vecinos_vivos](celda.vivo);
-    celda.nuevo_status = instancia;
+    var vecinosVivos = obtieneVecinosVivos(celda);
+    var instancia = vive[vecinosVivos](celda.vivo);
+    celda.nuevoEstatus = instancia;
 }
 
-function aplica_reglas()
+function aplicaReglas()
 {
-    recorre_xy(nuevo_estatus_celda);
+    recorreXY(nuevoEstatusCelda);
 }    
 
-function itera_juego()
+function iteraJuego()
 {
-    limpia_canvas();
-    aplica_reglas();
+    limpiaCanvas();
+    aplicaReglas();
     dibuja();
 }
 
 function dibuja()
 {
-    recorre_xy(dibuja_celda);
+    recorreXY(dibujaCelda);
 }
 
-function dibuja_celda(celda)
+function dibujaCelda(celda)
 {
     contexto.strokeStyle = '#007466';
-    decide_color_celda[celda.vivo](celda);
-    celda.vivo = celda.nuevo_status instanceof Verdadero;
+    decideColorCelda[celda.vivo](celda);
+    celda.vivo = celda.nuevoEstatus instanceof Verdadero;
 }
 
-function colorea_celda(celda)
+function coloreaCelda(celda)
 {
     contexto.fillStyle = '#007466';
-    contexto.fillRect((celda.x * ancho_celda), (celda.y * alto_celda), ancho_celda, alto_celda);
+    contexto.fillRect((celda.x * anchoCelda), (celda.y * altoCelda), anchoCelda, altoCelda);
 }
 
-function borra_celda(celda)
+function borraCelda(celda)
 {
     contexto.fillStyle = 'white';
-    contexto.clearRect((celda.x * ancho_celda), (celda.y * alto_celda), ancho_celda, alto_celda);
+    contexto.clearRect((celda.x * anchoCelda), (celda.y * altoCelda), anchoCelda, altoCelda);
 }
 
-function dimensiona_canvas()
+function dimensionaCanvas()
 {
-    var ancho_ventana = $(window).width();
-    var alto_ventana  = $(window).height();
-    actualiza_medidas(ancho_ventana, alto_ventana); 
+    var anchoVentana = $(window).width();
+    var altoVentana  = $(window).height();
+    actualizaMedidas(anchoVentana, altoVentana); 
 }
 
-function actualiza_medidas(ancho_ventana, alto_ventana)
+function actualizaMedidas(anchoVentana, altoVentana)
 {
-    grid.attr("width",  ancho_ventana);
-    grid.attr("height", alto_ventana);
-    ancho_celda = alto_celda = (ancho_ventana / cuantas_x);
-    cuantas_y = Math.floor(alto_ventana / alto_celda);
+    grid.attr("width",  anchoVentana);
+    grid.attr("height", altoVentana);
+    anchoCelda = altoCelda = (anchoVentana / cuantasX);
+    cuantasY = Math.floor(altoVentana / altoCelda);
 }
 
-function limpia_canvas()
+function limpiaCanvas()
 {
     contexto.clearRect(0, 0, grid.width(), grid.height());
 }
 
-function muestra_inicio()
+function muestraInicio()
 {
     var x = contexto.canvas.width / 2;
     var y = contexto.canvas.height / 2;
-    texto_bienvenida(x, y);
+    textoBienvenida(x, y);
 }
 
-function texto_bienvenida(x, y)
+function textoBienvenida(x, y)
 {
     contexto.textAlign = "center";
     contexto.font = "bold 20px Arial";
     contexto.fillText("Let's run this thing!", x, (y-10));
-    contexto.fillText("To start, click anywhere in the window", x, y+10);
+    contexto.fillText("To start, click anywhere in the window", x, (y+10));
 }
