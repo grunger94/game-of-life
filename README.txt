@@ -1,11 +1,11 @@
-Juego de la Vida Javascript
+Conway's Game of Life coded with Javascript
 
-Notas:
+Notes:
 
-Las pruebas fueron realizadas en una laptop con sistema operativo Windows 8.1, 4GB de RAM, procesador Intel Core i3 @ 2.19GHz y tarjeta gráfica Intel Graphics 3000
+Tests were performed in a laptop with operative system Windows 8.1, 4GB in RAM, processor Intel Core i3 @ 2.19GHz and a graphic card Intel Graphics 3000.
 
-En el archivo funciones.js hay tres variables que pueden ser manipuladas dependiendo del rendimiento del equipo que ejecute el programa. Estas variables controlan la cantidad de celdas en horizontal ([cuantas_x]) que conforman la matriz del juego de la vida, el porcentaje aproximado de celdas vivas ([porciento_celdas_vivas]) que existirán al arrancar el juego, así como la velocidad de refrescado ([velocidad_refrescado]).
+There are three variables in the file functions.js, which can be manipulated depending on the performance of the device which the program is run on: the first one (CELLSINX) controls the number of cells in horizontal axis that conform the game of life matrix, the second one (ALIVECELLS) is an estimated percentage of alive cells that will exist when starting the game, and the last one (SPEED) is the refresh speed of the game.
 
-Importante: 
+Important:
 
-las pruebas fueron realizadas en el navegador Google Chrome, puesto que Firefox e Internet Explorer generaban un error de ejecución de recursividad excedida.
+Test were successful in Google Chrome web browser, in the other hand, Firefox and Internet Explorer crashed generating a 'too much recursion' error.
